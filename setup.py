@@ -46,7 +46,7 @@ if sys.platform == "win32":
 
 setup(
     name="TerPENEitor",
-    version="1.5.2",
+    version="1.5.3",
     description="Bot de Discord",
     options={"build_exe": build_exe_options},
     executables=[
