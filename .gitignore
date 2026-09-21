@@ -1,0 +1,29 @@
+# Secrets
+**/.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment
+.venv/
+
+# Build artifacts
+build/
+TerPENEitor.egg-info/
+dist/
+*.egg
+
+# Database
+data/playlists.db
+
+# Logs
+logs/
+
+# External binaries
+ffmpeg.exe
+qjs.exe
+
+# Archives
+*.rar

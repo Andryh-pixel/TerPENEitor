@@ -1,0 +1,12 @@
+discord.py[voice]
+# IMPORTANTE: yt-dlp debe ser reciente o YouTube devolverá 403 al reproducir.
+# El venv ya tiene el canal nightly instalado. Si se recrea, instalar con:
+#   python -m pip install -U --pre --extra-index-url https://yt-dlp.github.io/PyPI-Index/ "yt-dlp[default]"
+yt-dlp
+ttkbootstrap
+pystray
+Pillow
+aiohttp
+cx_Freeze
+PyNaCl
+davey
