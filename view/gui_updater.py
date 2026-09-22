@@ -11,6 +11,7 @@ class GUIUpdater:
             title="TerPENEitor",
             themename="vapor"
         )
+        self.ventana.iconbitmap("smile.ico")
 
         self.ventana.resizable(False, False)
 
@@ -99,6 +100,7 @@ class GUIUpdater:
 
         ventana = ttk.Toplevel(self.ventana)
         ventana.title("Actualización")
+        ventana.iconbitmap("smile.ico")
         ventana.resizable(False, False)
 
         ancho = 360
