@@ -10,26 +10,15 @@ import zipfile
 
 URL_VERSION = (
     "https://raw.githubusercontent.com/"
-    "Andryh-pixel/TerPENEitor/main/version.json"
-)
-
+    "Andryh-pixel/TerPENEitor/main/version.json")
 
 def obtener_version_actual():
-    carpeta_updater = os.path.dirname(
-        os.path.abspath(sys.argv[0])
-    )
+    carpeta_updater = os.path.dirname(os.path.abspath(sys.argv[0]))
 
-    archivo_version = os.path.join(
-        carpeta_updater,
-        "version.txt"
-    )
-
+    archivo_version = os.path.join(carpeta_updater,"version.txt")
     try:
         with open(
-            archivo_version,
-            "r",
-            encoding="utf-8"
-        ) as archivo:
+            archivo_version,"r",encoding="utf-8") as archivo:
             return archivo.read().strip()
 
     except Exception as error:
@@ -40,14 +29,9 @@ def obtener_version_actual():
 
 def obtener_actualizacion():
     try:
-        with urllib.request.urlopen(
-            URL_VERSION,
-            timeout=10
+        with urllib.request.urlopen(URL_VERSION,timeout=10
         ) as respuesta:
-
-            datos = json.loads(
-                respuesta.read().decode("utf-8")
-            )
+            datos = json.loads(respuesta.read().decode("utf-8"))
 
         return datos["version"], datos["download_url"]
 
@@ -60,14 +44,9 @@ def obtener_actualizacion():
 def descargar_actualizacion(url, archivo, on_progress=None):
     print("Descargando actualización...")
 
-    response = urllib.request.urlopen(
-        url,
-        timeout=30
-    )
+    response = urllib.request.urlopen(url,timeout=30)
 
-    total = int(
-        response.headers.get("Content-Length", 0)
-    )
+    total = int(response.headers.get("Content-Length", 0))
     downloaded = 0
     ultimo_update = 0.0
 
@@ -90,8 +69,7 @@ def descargar_actualizacion(url, archivo, on_progress=None):
 
             if total > 0:
                 porcentaje = int(
-                    downloaded * 100 / total
-                )
+                    downloaded * 100 / total)
                 on_progress(porcentaje)
 
     if on_progress is not None:
@@ -102,13 +80,11 @@ def descargar_actualizacion(url, archivo, on_progress=None):
 
 def instalar_actualizacion(archivo_zip):
     carpeta_bot = os.path.dirname(
-        os.path.abspath(sys.argv[0])
-    )
+        os.path.abspath(sys.argv[0]))
 
     carpeta_temporal = os.path.join(
         tempfile.gettempdir(),
-        "TerPENEitor_update"
-    )
+        "TerPENEitor_update")
 
     if os.path.exists(carpeta_temporal):
         shutil.rmtree(carpeta_temporal)
@@ -122,24 +98,16 @@ def instalar_actualizacion(archivo_zip):
         "r"
     ) as archivo:
 
-        archivo.extractall(
-            carpeta_temporal
-        )
+        archivo.extractall(carpeta_temporal)
 
-    contenido = os.listdir(
-        carpeta_temporal
-    )
+    contenido = os.listdir(carpeta_temporal)
 
     if len(contenido) == 1:
 
-        posible_carpeta = os.path.join(
-            carpeta_temporal,
-            contenido[0]
-        )
+        posible_carpeta = os.path.join(carpeta_temporal,contenido[0])
 
         if os.path.isdir(
-            posible_carpeta
-        ):
+            posible_carpeta):
             carpeta_nueva = posible_carpeta
 
         else:
@@ -150,111 +118,63 @@ def instalar_actualizacion(archivo_zip):
 
     print("Instalando archivos...")
 
-    for nombre in os.listdir(
-        carpeta_nueva
-    ):
+    for nombre in os.listdir(carpeta_nueva):
 
         # Estos archivos y carpetas NO se reemplazan
         if nombre in [
             "TerPENEitor.exe",
             "config",
             "data",
-            "logs"
-        ]:
+            "logs"]:
             continue
 
-        origen = os.path.join(
-            carpeta_nueva,
-            nombre
-        )
+        origen = os.path.join(carpeta_nueva,nombre)
 
-        destino = os.path.join(
-            carpeta_bot,
-            nombre
-        )
+        destino = os.path.join(carpeta_bot,nombre)
 
-        if os.path.isdir(
-            origen
-        ):
+        if os.path.isdir(origen):
 
-            if os.path.exists(
-                destino
-            ):
-                shutil.rmtree(
-                    destino
-                )
+            if os.path.exists(destino):
+                shutil.rmtree( destino)
 
-            shutil.copytree(
-                origen,
-                destino
-            )
-
+            shutil.copytree(origen,destino)
         else:
+            if os.path.exists(destino):
 
-            if os.path.exists(
-                destino
-            ):
-                os.remove(
-                    destino
-                )
+                os.remove(destino)
 
-            shutil.copy2(
-                origen,
-                destino
-            )
+            shutil.copy2(origen,destino)
 
-    shutil.rmtree(
-        carpeta_temporal
-    )
+    shutil.rmtree(carpeta_temporal)
 
-    if os.path.exists(
-        archivo_zip
-    ):
-        os.remove(
-            archivo_zip
-        )
+    if os.path.exists(archivo_zip):
 
+        os.remove(archivo_zip)
     print("Actualización instalada.")
 
 
 def iniciar_bot():
-    carpeta_bot = os.path.dirname(
-        os.path.abspath(sys.argv[0])
-    )
+    carpeta_bot = os.path.dirname(os.path.abspath(sys.argv[0]))
 
-    bot = os.path.join(
-        carpeta_bot,
-        "verificador.exe"
-    )
+    bot = os.path.join(carpeta_bot,"verificador.exe")
 
-    if os.path.exists(
-        bot
-    ):
-        subprocess.Popen(
-            [bot]
-        )
+    if os.path.exists(bot):
+        subprocess.Popen([bot])
 
     else:
-        print(
-            "No se encontró verificador.exe."
-        )
+        print("No se encontró verificador.exe.")
 
 
 def main(gui=None):
     if gui:
-        gui.cambiar_estado(
-            "Comprobando actualizaciones..."
-        )
+        gui.cambiar_estado("Comprobando actualizaciones...")
     else:
         print("Comprobando actualizaciones...")
 
     version_actual = obtener_version_actual()
 
     if not gui:
-        print(
-            "Versión instalada:",
-            version_actual
-        )
+        print("Versión instalada:",version_actual)
 
     version_nueva, url_descarga = obtener_actualizacion()
 
@@ -264,21 +184,15 @@ def main(gui=None):
 
     if version_nueva == version_actual:
         if gui:
-            gui.cambiar_estado(
-                "TerPENEitor ya está actualizado."
-            )
+            gui.cambiar_estado("TerPENEitor ya está actualizado.")
         else:
-            print(
-                "TerPENEitor ya está actualizado."
-            )
+            print("TerPENEitor ya está actualizado.")
 
         iniciar_bot()
         return
 
     if gui:
-        gui.cambiar_estado(
-            f"Nueva versión: {version_nueva}"
-        )
+        gui.cambiar_estado(f"Nueva versión: {version_nueva}")
 
         gui.respuesta_usuario = None
         gui.evento_respuesta.clear()
@@ -289,21 +203,13 @@ def main(gui=None):
             iniciar_bot()
             return
 
-        gui.cambiar_estado(
-            "Descargando actualización..."
-        )
+        gui.cambiar_estado("Descargando actualización...")
         gui.mostrar_progreso_indeterminado()
 
     else:
-        print(
-            "Nueva versión encontrada:",
-            version_nueva
-        )
+        print("Nueva versión encontrada:",version_nueva)
 
-    archivo_zip = os.path.join(
-        tempfile.gettempdir(),
-        "TerPENEitor_update.zip"
-    )
+    archivo_zip = os.path.join(tempfile.gettempdir(),"TerPENEitor_update.zip")
 
     try:
 
@@ -312,39 +218,26 @@ def main(gui=None):
             archivo_zip,
             on_progress=(
                 gui.actualizar_progreso
-                if gui else None
-            )
-        )
+                if gui else None))
 
         if gui:
-            gui.cambiar_estado(
-                "Instalando actualización..."
-            )
+            gui.cambiar_estado("Instalando actualización...")
             gui.mostrar_progreso_indeterminado()
 
-        instalar_actualizacion(
-            archivo_zip
-        )
+        instalar_actualizacion(archivo_zip)
 
         iniciar_bot()
 
     except Exception as error:
 
         if not gui:
-            print(
-                "Error al actualizar:"
-            )
+            print("Error al actualizar:")
             print(error)
 
-        if os.path.exists(
-            archivo_zip
-        ):
-            os.remove(
-                archivo_zip
-            )
+        if os.path.exists(archivo_zip):
+            os.remove(archivo_zip)
 
         iniciar_bot()
-
 
 if __name__ == "__main__":
     main()

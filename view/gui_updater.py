@@ -161,8 +161,3 @@ class GUIUpdater:
         )
         hilo.start()
         self.ventana.mainloop()
-
-
-if __name__ == "__main__":
-    app = GUIUpdater()
-    app.iniciar()
