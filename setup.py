@@ -34,6 +34,7 @@ build_exe_options = {
         "qjs.exe",
         "smile.ico",
         "version.txt",
+        "pruebas.txt",
         ("config", "config"),
         ("config/.env", "config/.env"),
 

@@ -12,8 +12,16 @@ URL_VERSION = (
     "https://raw.githubusercontent.com/"
     "Andryh-pixel/TerPENEitor/main/version.json")
 
+
+def _carpeta_base():
+    if getattr(sys, "frozen", False):
+        return os.path.dirname(os.path.abspath(sys.executable))
+    return os.path.dirname(
+        os.path.dirname(os.path.abspath(__file__)))
+
+
 def obtener_version_actual():
-    carpeta_updater = os.path.dirname(os.path.abspath(sys.argv[0]))
+    carpeta_updater = _carpeta_base()
 
     archivo_version = os.path.join(carpeta_updater,"version.txt")
     try:
@@ -79,8 +87,7 @@ def descargar_actualizacion(url, archivo, on_progress=None):
 
 
 def instalar_actualizacion(archivo_zip):
-    carpeta_bot = os.path.dirname(
-        os.path.abspath(sys.argv[0]))
+    carpeta_bot = _carpeta_base()
 
     carpeta_temporal = os.path.join(
         tempfile.gettempdir(),
@@ -154,15 +161,28 @@ def instalar_actualizacion(archivo_zip):
 
 
 def iniciar_bot():
-    carpeta_bot = os.path.dirname(os.path.abspath(sys.argv[0]))
+    carpeta_bot = _carpeta_base()
 
-    bot = os.path.join(carpeta_bot,"verificador.exe")
+    if getattr(sys, "frozen", False):
 
-    if os.path.exists(bot):
-        subprocess.Popen([bot])
+        bot = os.path.join(carpeta_bot,"verificador.exe")
 
+        if os.path.exists(bot):
+            subprocess.Popen([bot])
+
+        else:
+            print("No se encontró verificador.exe.")
+        return
+
+    script = os.path.join(carpeta_bot, "main.py")
+
+    if os.path.exists(script):
+        subprocess.Popen(
+            [sys.executable, script],
+            cwd=carpeta_bot
+        )
     else:
-        print("No se encontró verificador.exe.")
+        print("No se encontró main.py.")
 
 
 def main(gui=None):

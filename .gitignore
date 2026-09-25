@@ -15,6 +15,10 @@ TerPENEitor.egg-info/
 dist/
 *.egg
 
+mio/
+TerPENEitor.egg-info/
+dist/
+*.egg
 # Database
 data/playlists.db
 
@@ -27,3 +31,4 @@ qjs.exe
 
 # Archives
 *.rar
+*pruebas.txt
