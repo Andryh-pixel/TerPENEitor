@@ -32,7 +32,9 @@ class GUIUpdater:
 
         self.estado = ttk.Label(
             self.ventana,
-            text="Comprobando actualizaciones..."
+            text="Comprobando actualizaciones...",
+            wraplength=360,
+            justify="center"
         )
         self.estado.pack(pady=5)
 
@@ -83,6 +85,20 @@ class GUIUpdater:
 
     def actualizar_progreso(self, porcentaje):
         self.mostrar_progreso(porcentaje)
+
+    def mostrar_error(self, mensaje):
+        self.ventana.after(
+            0,
+            lambda: self._aplicar_error(mensaje)
+        )
+
+    def _aplicar_error(self, mensaje):
+        self.progreso.stop()
+        self.progreso.config(mode="determinate", value=0)
+        self.estado.config(
+            text=f"Error al actualizar:\n{mensaje}",
+            foreground="#ff6b6b"
+        )
 
     def mostrar_confirmacion(self, version):
         self.ventana.after(
@@ -151,7 +167,12 @@ class GUIUpdater:
         self.evento_respuesta.set()
 
     def _ejecutar_flujo(self):
-        main(gui=self)
+        error = main(gui=self)
+
+        if error:
+            import time
+            time.sleep(8)
+
         self.ventana.after(0, self.ventana.destroy)
 
     def iniciar(self):

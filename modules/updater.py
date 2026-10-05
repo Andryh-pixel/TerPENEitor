@@ -8,6 +8,8 @@ import time
 import urllib.request
 import zipfile
 
+from config.logger import registrar, registrar_error
+
 URL_VERSION = (
     "https://raw.githubusercontent.com/"
     "Andryh-pixel/TerPENEitor/main/version.json")
@@ -125,6 +127,47 @@ def instalar_actualizacion(archivo_zip):
 
     print("Instalando archivos...")
 
+    if getattr(sys, "frozen", False):
+        # El exe en ejecución mantiene bloqueados archivos de lib/, por lo
+        # que no se puede sobrescribir directamente. Se prepara una carpeta
+        # de staging y un script que hace el reemplazo al cerrarse el updater.
+        staging = os.path.join(carpeta_bot, "_update_staging")
+
+        if os.path.exists(staging):
+            shutil.rmtree(staging, ignore_errors=True)
+
+        shutil.move(carpeta_nueva, staging)
+
+        script = os.path.join(carpeta_bot, "_aplicar_update.bat")
+
+        with open(script, "w", encoding="utf-8") as f:
+            f.write("@echo off\r\n")
+            f.write(":espera\r\n")
+            f.write('tasklist /FI "IMAGENAME eq TerPENEitor.exe" | find /I "TerPENEitor.exe" >nul\r\n')
+            f.write("if not errorlevel 1 (\r\n")
+            f.write("  timeout /t 1 /nobreak >nul\r\n")
+            f.write("  goto espera\r\n")
+            f.write(")\r\n")
+            f.write("taskkill /F /IM verificador.exe >nul 2>&1\r\n")
+            f.write('robocopy "%~dp0_update_staging" "%~dp0." /E /COPY:DAT /XD config data logs /R:3 /W:1 >nul\r\n')
+            f.write('rmdir /S /Q "%~dp0_update_staging"\r\n')
+            f.write('start "" "%~dp0verificador.exe"\r\n')
+            f.write('del "%~f0"\r\n')
+
+        subprocess.Popen(
+            ["cmd", "/c", script],
+            cwd=carpeta_bot,
+            creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+        )
+
+        shutil.rmtree(carpeta_temporal, ignore_errors=True)
+
+        if os.path.exists(archivo_zip):
+            os.remove(archivo_zip)
+
+        print("Actualización programada.")
+        return True
+
     for nombre in os.listdir(carpeta_nueva):
 
         # Estos archivos y carpetas NO se reemplazan
@@ -158,6 +201,7 @@ def instalar_actualizacion(archivo_zip):
 
         os.remove(archivo_zip)
     print("Actualización instalada.")
+    return False
 
 
 def iniciar_bot():
@@ -200,7 +244,7 @@ def main(gui=None):
 
     if version_nueva is None:
         iniciar_bot()
-        return
+        return None
 
     if version_nueva == version_actual:
         if gui:
@@ -209,7 +253,7 @@ def main(gui=None):
             print("TerPENEitor ya está actualizado.")
 
         iniciar_bot()
-        return
+        return None
 
     if gui:
         gui.cambiar_estado(f"Nueva versión: {version_nueva}")
@@ -221,7 +265,7 @@ def main(gui=None):
 
         if not gui.respuesta_usuario:
             iniciar_bot()
-            return
+            return None
 
         gui.cambiar_estado("Descargando actualización...")
         gui.mostrar_progreso_indeterminado()
@@ -244,20 +288,27 @@ def main(gui=None):
             gui.cambiar_estado("Instalando actualización...")
             gui.mostrar_progreso_indeterminado()
 
-        instalar_actualizacion(archivo_zip)
+        delegado = instalar_actualizacion(archivo_zip)
 
-        iniciar_bot()
+        if not delegado:
+            iniciar_bot()
+
+        return None
 
     except Exception as error:
 
-        if not gui:
+        registrar_error("Error al actualizar", exc=error)
+
+        if gui:
+            gui.mostrar_error(str(error))
+        else:
             print("Error al actualizar:")
             print(error)
 
         if os.path.exists(archivo_zip):
             os.remove(archivo_zip)
 
-        iniciar_bot()
+        return str(error)
 
 if __name__ == "__main__":
     main()
