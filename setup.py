@@ -35,7 +35,7 @@ build_exe_options = {
         "smile.ico",
         "version.txt",
         ("assets", "assets"),
-        ("config", "config"),
+        ("config/.env", "config/.env"),
 
         # Forzar librerías por fallas detectadas
         (nacl.__path__[0], "nacl"),
@@ -52,7 +52,7 @@ if sys.platform == "win32":
 
 setup(
     name="TerPENEitor",
-    version="1.6.1",
+    version="1.6.2",
     description="Bot de Discord",
 
     options={

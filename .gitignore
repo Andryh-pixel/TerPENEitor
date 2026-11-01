@@ -25,6 +25,9 @@ data/playlists.db
 # Logs
 logs/
 
+#pruebas
+view/prueba.py
+
 # External binaries
 ffmpeg.exe
 qjs.exe
@@ -32,3 +35,4 @@ qjs.exe
 # Archives
 *.rar
 *pruebas.txt
+*GUI_MIGRACION_FLET.md
