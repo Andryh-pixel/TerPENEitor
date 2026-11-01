@@ -35,9 +35,20 @@ def configurar_bot():
     @bot.event
     async def on_ready():
         try:
-            enviar_a_log("Sincronizando comandos...")
-            sincro = await bot.tree.sync()
-            enviar_a_log(f"{len(sincro)} comandos se sincronizaron correctamente.")
+            if not bot.tree.get_commands():
+                registrar_error(
+                    "Sincronización cancelada",
+                    exc=RuntimeError(
+                        "El árbol local no contiene comandos; no se sincronizó "
+                        "para evitar borrar los comandos publicados."
+                    ),
+                )
+            else:
+                enviar_a_log("Sincronizando comandos...")
+                sincro = await bot.tree.sync()
+                enviar_a_log(
+                    f"{len(sincro)} comandos se sincronizaron correctamente."
+                )
         except Exception as e:
             registrar_error("Error al sincronizar comandos", exc=e)
 
@@ -78,23 +89,27 @@ def iniciar_bot():
         enviar_a_log("No se encontró el token de Discord. Revisa el archivo .env del proyecto o del ejecutable.")
         return
 
-    try:
-        import view.comandos
-    except Exception as e:
-        registrar_error("Error al cargar los comandos del bot", exc=e)
-        return
-
     # Si el bot ya existe y fue cerrado anteriormente, necesitamos una instancia nueva.
     # discord.py no permite re-utilizar una instancia que ya ejecutó close().
     if bot and bot.is_closed():
         enviar_a_log("Limpiando fluidos y reiniciando a TerPENEitor...")
         configurar_bot()
-        # Recargamos el módulo de comandos para que se registren en la nueva instancia del bot
-        try:
-            importlib.reload(view.comandos)
-        except Exception as e:
-            registrar_error("Error al recargar los comandos del bot", exc=e)
-            return
+
+    try:
+        modulo_comandos = sys.modules.get("view.comandos")
+        if modulo_comandos is None:
+            modulo_comandos = importlib.import_module("view.comandos")
+
+        if not bot.tree.get_commands():
+            importlib.reload(modulo_comandos)
+
+        if not bot.tree.get_commands():
+            raise RuntimeError(
+                "view.comandos no registró comandos en el árbol del bot."
+            )
+    except Exception as e:
+        registrar_error("Error al cargar los comandos del bot", exc=e)
+        return
 
     if bot and bot.is_ready():
         enviar_a_log("El bot ya está encendido.")

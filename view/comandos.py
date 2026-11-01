@@ -74,21 +74,34 @@ async def musica_autocomplete(
     """
     Usa la API de sugerencias de YouTube para que sea instantáneo.
     """
-    if not current:
+    consulta = current.strip()[:100]
+    if not consulta:
         return []
 
+    opcion_escrita = app_commands.Choice(name=consulta, value=consulta)
+
     try:
-        # Consultamos el motor de sugerencias de YouTube (Firefox/Chrome style)
-        url = f"https://suggestqueries.google.com/complete/search?client=firefox&ds=yt&q={current}"
         session = await get_aiohttp_session()
-        async with session.get(url) as resp:
+        async with session.get(
+            "https://suggestqueries.google.com/complete/search",
+            params={"client": "firefox", "ds": "yt", "q": consulta},
+            timeout=aiohttp.ClientTimeout(total=0.8),
+        ) as resp:
             if resp.status == 200:
-                texto = await resp.text()
-                sugerencias = json.loads(texto)[1]
-                return [app_commands.Choice(name=s, value=s) for s in sugerencias[:10]]
-        return []
-    except Exception:
-        return []
+                datos = await resp.json()
+                sugerencias = datos[1]
+                opciones = [
+                    app_commands.Choice(name=s[:100], value=s[:100])
+                    for s in sugerencias
+                    if isinstance(s, str) and s.strip()
+                ][:9]
+                if not any(opcion.value == consulta for opcion in opciones):
+                    opciones.append(opcion_escrita)
+                return opciones or [opcion_escrita]
+        return [opcion_escrita]
+    except Exception as e:
+        registrar_error("Error en el autocompletado de /musica", exc=e)
+        return [opcion_escrita]
 
 # ---------------- SKIP ----------------
 

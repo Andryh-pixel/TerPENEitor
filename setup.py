@@ -52,7 +52,7 @@ if sys.platform == "win32":
 
 setup(
     name="TerPENEitor",
-    version="1.6.2",
+    version="1.6.3",
     description="Bot de Discord",
 
     options={
