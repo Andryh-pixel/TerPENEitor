@@ -1,7 +1,9 @@
 import discord
 from discord.ui import Select, View
-from config.chanel_config import verificar_canal_voz
+
 import modules.player as player
+from config.chanel_config import verificar_canal_voz
+
 
 class OpcionesMusica(Select):
     def __init__(self, resultados, interaccion_original):

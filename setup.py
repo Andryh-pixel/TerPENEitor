@@ -1,9 +1,8 @@
 import sys
 
-from cx_Freeze import Executable, setup
-
 import davey
 import nacl
+from cx_Freeze import Executable, setup
 
 # Opciones de construcción
 build_exe_options = {
@@ -22,11 +21,12 @@ build_exe_options = {
         "ttkbootstrap",
         "pystray",
         "PIL",
+        "flet",
         "ftplib",
         "dotenv",
         "modules",
-        "view"
     ],
+    "includes": ["view.comandos"],
 
     # Incluimos archivos externos esenciales
     "include_files": [
@@ -34,9 +34,8 @@ build_exe_options = {
         "qjs.exe",
         "smile.ico",
         "version.txt",
-        "pruebas.txt",
+        ("assets", "assets"),
         ("config", "config"),
-        ("config/.env", "config/.env"),
 
         # Forzar librerías por fallas detectadas
         (nacl.__path__[0], "nacl"),
@@ -53,7 +52,7 @@ if sys.platform == "win32":
 
 setup(
     name="TerPENEitor",
-    version="1.5.6",
+    version="1.6.1",
     description="Bot de Discord",
 
     options={
@@ -61,15 +60,12 @@ setup(
     },
 
     executables=[
-        # ESTE ES EL ACTUALIZADOR
         Executable(
             "view/gui_updater.py",
             base="Win32GUI",
             target_name="TerPENEitor.exe",
             icon="smile.ico"
         ),
-
-        # ESTE ES EL BOT REAL
         Executable(
             "main.py",
             base=base,

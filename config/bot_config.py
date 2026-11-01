@@ -1,13 +1,20 @@
-import discord
-from discord import app_commands
-from discord.ext import commands
+import asyncio
+import importlib
 import os
 import sys
 import threading
-import asyncio
+
+import discord
+from discord import app_commands
+from discord.ext import commands
+
 import config.keys as keys
-import importlib
-from config.logger import registrar, registrar_error, instalar_hooks_globales, set_gui_callback
+from config.logger import (
+    instalar_hooks_globales,
+    registrar,
+    registrar_error,
+    set_gui_callback,
+)
 
 # Captura excepciones fuera de los manejadores (hilos, callbacks sueltos)
 instalar_hooks_globales()
@@ -71,6 +78,12 @@ def iniciar_bot():
         enviar_a_log("No se encontró el token de Discord. Revisa el archivo .env del proyecto o del ejecutable.")
         return
 
+    try:
+        import view.comandos
+    except Exception as e:
+        registrar_error("Error al cargar los comandos del bot", exc=e)
+        return
+
     # Si el bot ya existe y fue cerrado anteriormente, necesitamos una instancia nueva.
     # discord.py no permite re-utilizar una instancia que ya ejecutó close().
     if bot and bot.is_closed():
@@ -78,10 +91,10 @@ def iniciar_bot():
         configurar_bot()
         # Recargamos el módulo de comandos para que se registren en la nueva instancia del bot
         try:
-            import view.comandos
             importlib.reload(view.comandos)
         except Exception as e:
-            enviar_a_log(f"Error al recargar comandos: {e}")
+            registrar_error("Error al recargar los comandos del bot", exc=e)
+            return
 
     if bot and bot.is_ready():
         enviar_a_log("El bot ya está encendido.")

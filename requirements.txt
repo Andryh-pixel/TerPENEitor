@@ -4,6 +4,7 @@ discord.py[voice]
 #   python -m pip install -U --pre --extra-index-url https://yt-dlp.github.io/PyPI-Index/ "yt-dlp[default]"
 yt-dlp
 ttkbootstrap
+flet==1.0.5
 pystray
 Pillow
 aiohttp

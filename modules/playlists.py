@@ -1,6 +1,7 @@
-import sqlite3
 import os
+import sqlite3
 import threading
+
 from config.bot_config import DIRECTORIO_BASE, enviar_a_log
 
 # ---------------- Configuración de la base de datos ----------------
