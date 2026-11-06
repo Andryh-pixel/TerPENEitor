@@ -1,6 +1,8 @@
+import threading
+
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
-import threading
+
 from modules.updater import main
 
 

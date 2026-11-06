@@ -11,6 +11,7 @@ import flet as ft
 
 from view.gui_flet import app
 
+#verifica si el archivo es exe o no, si es exe toma la ruta del exe, si no, toma la ruta del archivo actual
 if getattr(sys, "frozen", False):
     BASE_DIR = Path(sys.executable).resolve().parent
 else:

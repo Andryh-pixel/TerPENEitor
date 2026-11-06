@@ -1,18 +1,31 @@
-import discord
-from discord import app_commands
-import yt_dlp
 import asyncio
-import aiohttp
 import json
-import config.ftp_config as ftp_config
 import random
+
+import aiohttp
+import discord
+import yt_dlp
+from discord import app_commands
+
+import config.ftp_config as ftp_config
+import modules.player as player
+import modules.playlists as playlists_db
 from config.bot_config import *
 from config.chanel_config import verificar_canal_voz
-import modules.player as player
-from modules.ui import VistaMusica, VistaPaginacionPlaylist, VistaConfirmacionBorrar, VistaListaFTP
-import modules.playlists as playlists_db
-from modules.youtube import obtener_playlist, buscar_cancion, obtener_info_video, obtener_info_playlist, construir_ydl_opts
 from config.logger import registrar_error
+from modules.ui import (
+    VistaConfirmacionBorrar,
+    VistaListaFTP,
+    VistaMusica,
+    VistaPaginacionPlaylist,
+)
+from modules.youtube import (
+    buscar_cancion,
+    construir_ydl_opts,
+    obtener_info_playlist,
+    obtener_info_video,
+    obtener_playlist,
+)
 
 # Reutilizar una sola sesión HTTP para autocomplete y reducir overhead
 aiohttp_session = None

@@ -143,14 +143,15 @@ class Taskbar(ft.Container):
                         content=self.textbox,
                         left=0,
                         right=0,
-                        bottom=0,
-                        height=160,
+                        top=355,
+                        height=210,
                     ),
                 ],
                 expand=True,
                 fit=ft.StackFit.EXPAND,
             ),
         )
+
 
 
 class Encabezado(ft.Container):

@@ -17,7 +17,7 @@ def probar_conexion_ftp(host, port, user, password):
     ftp.quit()
 
 #se conecta al server ftp y de vuelve la lista de canciones encontrada
-def obtener_musica_ftp():
+def obtener_musica_ftp(raise_errors=False):
     try:
         ftp = ftplib.FTP()
         # Conexión al host y puerto configurados en py
@@ -50,4 +50,6 @@ def obtener_musica_ftp():
         return lista_reproduccion
     except Exception as e:
         print(f"Error al obtener lista FTP: {e}")
+        if raise_errors:
+            raise
         return []
